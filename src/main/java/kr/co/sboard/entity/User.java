@@ -1,6 +1,9 @@
 package kr.co.sboard.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import kr.co.sboard.dto.UserDTO;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -16,6 +19,7 @@ import java.time.LocalDateTime;
 @Entity
 public class User {
 
+    @Id
     private String userid;
     private String pass;
     private String name;
