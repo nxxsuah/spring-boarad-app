@@ -2,6 +2,9 @@ package kr.co.sboard.dto;
 
 import lombok.*;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -21,6 +24,15 @@ public class ArticleDTO {
     private String writer;
     private String regip;
     private String wdate;
+
+
+    // 폼 업로드 파일 객체
+    private MultipartFile file1;
+    private MultipartFile file2;
+
+    public List<MultipartFile> getFiles(){
+        return List.of(file1, file2);
+    }
 
     public ArticleDTO toEntity(){
 

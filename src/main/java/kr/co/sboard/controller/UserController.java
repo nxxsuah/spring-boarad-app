@@ -3,10 +3,12 @@ package kr.co.sboard.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import kr.co.sboard.dto.AppInfoDTO;
 import kr.co.sboard.dto.TermsDTO;
 import kr.co.sboard.dto.UserCheckDTO;
 import kr.co.sboard.dto.UserDTO;
+import kr.co.sboard.service.EmailService;
 import kr.co.sboard.service.TermsService;
 import kr.co.sboard.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,7 @@ public class UserController {
 
     private final UserService userService;
     private final TermsService termsService;
+    private final EmailService emailService;
 
 
     @GetMapping("/user/info")
@@ -76,11 +79,17 @@ public class UserController {
 
     @ResponseBody
     @GetMapping("/user/check")
-    public ResponseEntity<Map<String, Integer>> check(UserCheckDTO dto){
+    public ResponseEntity<Map<String, Integer>> check(UserCheckDTO dto, HttpSession session){
         log.info(dto);
 
         //서비스호출
         int count = userService.getCount(dto);
+
+        if(dto.getType().equals("email") && count == 0){
+                String code = emailService.sendCode(dto.getValue());
+                session.setAttribute("sessCode", code);
+        }
+
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -89,15 +98,25 @@ public class UserController {
 
     @ResponseBody
     @PostMapping("/user/check")
-    public ResponseEntity<Map<String, Integer>> check(@RequestBody Map<String, String> jsonData){
+    public ResponseEntity<Map<String, Integer>> check(@RequestBody Map<String, String> jsonData, HttpSession session){
 
-        log.info(jsonData);
+        log.info(jsonData.get("code"));
 
-        int count = 0;
+        // 세션에 저장된 코드와 클라이언트가 전송한 코드가 일치하는지 여부
+        String sessCode = (String) session.getAttribute("sessCode");
+        String jsonCode = jsonData.get("code");
+
+        log.info("세션코드 : {}", sessCode);
+        log.info("입력코드 : {}", jsonCode);
+
+        if(sessCode != null && sessCode.equals(jsonCode)) {
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(Map.of("count", 0));
+        }
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(Map.of("count", count));
+                .body(Map.of("count", 1));
     }
-
 }

@@ -253,7 +253,7 @@ document.addEventListener('DOMContentLoaded', function(){
         };
 
         // 이메일 인증코드 전송하기(인증코드 검증)
-        const response = await fetch('user/check', {
+        const response = await fetch('/user/check', {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json"
@@ -294,7 +294,7 @@ document.addEventListener('DOMContentLoaded', function(){
         }
 
         // 휴대폰 중복 여부 요청하기
-        const response = await fetch('/jboard/user/check.do?type=hp&value='+value);
+        const response = await fetch('/user/check.do?type=hp&value='+value);
         const data = await response.json();
         console.log(data);
 

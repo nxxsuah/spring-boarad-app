@@ -21,7 +21,6 @@ public class UserService {
 
     private final UserDAO dao;
     private final UserRepository repository;
-
     private final PasswordEncoder passwordEncoder;
 
     public UserDTO get(String userid){
@@ -42,11 +41,6 @@ public class UserService {
             count = repository.countUserByNick(dto.getValue());
         } else if(dto.getType().equals("email")){
             count = repository.countUserByEmail(dto.getValue());
-
-            if(count == 0) {
-                //인증코드 이메일 전송
-            }
-
         } else if(dto.getType().equals("hp")){
             count = repository.countUserByHp(dto.getValue());
         }
